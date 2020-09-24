@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Highlight from 'react-highlight';
+import { connect } from 'react-redux';
 
 const USER_INFO_SAMPLE = `{
   "name": "Kevin", // 用户名
@@ -38,4 +39,6 @@ class Home extends Component {
   }
 }
 
-export default Home;
+const mapStateToProps = ({ userInfo }) => ({ userInfo })
+
+export default connect(mapStateToProps)(Home);

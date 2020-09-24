@@ -1,19 +1,51 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { setUserInfo, clearUserInfo} from '../action/index';
 import './Header.scss';
 
 class Header extends Component {
+  handleOnClick = () => {
+    if (this.props.userInfo.logged) {
+      this.props.handleSignOut();
+    } else {
+      fetch('https://my-json-server.typicode.com/kevindongzg/demo/login')
+        .then(res => res.json())
+        .then(data => {
+          this.props.handleSignIn({ logged: true, ...data });
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    }
+  };
+
   render() {
     return (
       <header className="header">
         <div className="header-wrapper">
-          <img src="" alt="头像" />
-          <span className="username">用户名</span>
+        {this.props.userInfo.logged && (
+            <>
+              <img src="https://avatars2.githubusercontent.com/u/40817605" alt="头像" />
+              <span className="username">Kevin</span>
+            </>
+          )}
 
-          <a className="sign">Sign out</a>
+          <a className="sign" onClick={this.handleOnClick}>
+            {this.props.userInfo.logged ? 'Sign out' : 'Sign in'}
+          </a>
         </div>
       </header>
     );
   }
 }
 
-export default Header;
+const mapStateToProps = ({ userInfo }) => ({
+  userInfo
+});
+
+const mapDispatchToProps = {
+  handleSignIn: info => setUserInfo(info),
+  handleSignOut: () => clearUserInfo()
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Header);
